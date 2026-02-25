@@ -1,0 +1,26 @@
+{
+  "name": "vami-nuxt",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@iconify-json/tabler": "^1.2.27",
+    "@pinia/nuxt": "^0.11.3",
+    "@tailwindcss/vite": "^4.2.1",
+    "axios": "^1.13.5",
+    "hugeicons-vue": "^0.0.1",
+    "iconify-icon": "^3.0.2",
+    "nuxt": "^4.3.1",
+    "pinia": "^3.0.4",
+    "socket.io-client": "^4.8.3",
+    "tailwindcss": "^4.2.1",
+    "vue": "^3.5.28",
+    "vue-router": "^4.6.4"
+  }
+}
