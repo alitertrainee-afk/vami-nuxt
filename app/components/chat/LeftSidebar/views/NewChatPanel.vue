@@ -1,9 +1,12 @@
 <script setup>
+// libs imports
 import { ref } from "vue";
 import { UserGroupIcon, UserAdd01Icon, UserMultipleIcon } from "hugeicons-vue";
 
-// Components
+// Layouts
 import PanelLayout from "../../layout/PanelLayout.vue";
+
+// UI Imports - [Molecules]
 import BaseListItem from "../../../ui/molecules/BaseListItem.vue";
 import SearchInput from "../../../ui/molecules/SearchInput.vue";
 
