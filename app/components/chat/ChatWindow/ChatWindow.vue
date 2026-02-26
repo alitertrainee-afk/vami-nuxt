@@ -1,12 +1,8 @@
 <script setup>
-// Extracted Sub-Components
 import ChatHeader from "./ChatHeader.vue";
 import ChatMessageList from "./ChatMessageList.vue";
 import MessageComposer from "./MessageComposer.vue";
-
-// stores
-import { useAuthStore } from "~/stores/auth.store";
-import { useChatStore } from "~/stores/chat.store";
+import ConnectionBanner from "./ConnectionBanner.vue";
 
 const chatStore = useChatStore();
 const authStore = useAuthStore();
@@ -18,9 +14,7 @@ const handleLoadMore = () => {
 };
 
 const handleSend = (content) => {
-  console.log("🚀 ~ handleSend ~ content: Before", content);
   chatStore.sendMessage(content);
-  console.log("🚀 ~ handleSend ~ content: After", content);
 };
 </script>
 
@@ -34,6 +28,7 @@ const handleSend = (content) => {
 
     <header class="shrink-0 z-20 w-full shadow-sm">
       <ChatHeader @back="$emit('back')" @toggle-info="$emit('toggle-info')" />
+      <ConnectionBanner />
     </header>
 
     <main class="flex-1 min-h-0 min-w-0 relative z-10 flex flex-col">

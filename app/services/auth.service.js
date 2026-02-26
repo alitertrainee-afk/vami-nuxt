@@ -1,26 +1,25 @@
-// local imports
-import axiosInstance from "~/api/axios.instance.js";
+export function createAuthService(apiFetch) {
+  return {
+    login(credentials) {
+      if (
+        (!credentials.email && !credentials.username) ||
+        !credentials.password
+      ) {
+        throw new Error("Email or username and password are required");
+      }
+      return apiFetch("/auth/login", { method: "POST", body: credentials });
+    },
 
-export const AuthService = {
-  async login(credentials) {
-    if (
-      (!credentials.email && !credentials.username) ||
-      !credentials.password
-    ) {
-      throw new Error("Email or username and password are required");
-    }
-    return await axiosInstance.post("/auth/login", credentials);
-  },
+    register(userData) {
+      return apiFetch("/auth/register", { method: "POST", body: userData });
+    },
 
-  async register(userData) {
-    return await axiosInstance.post("/auth/register", userData);
-  },
+    refresh() {
+      return apiFetch("/auth/refresh", { method: "POST" });
+    },
 
-  async refresh() {
-    return await axiosInstance.post("/auth/refresh");
-  },
-
-  async logout() {
-    return await axiosInstance.post("/auth/logout");
-  },
-};
+    logout() {
+      return apiFetch("/auth/logout", { method: "POST" });
+    },
+  };
+}

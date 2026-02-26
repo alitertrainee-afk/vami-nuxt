@@ -1,10 +1,11 @@
 <template>
-  <NuxtRouteAnnouncer />
-  <NuxtPage />
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
 
 <style>
-/* Subtle page transition for enterprise feel */
+/* Page transition for smooth navigation */
 .page-enter-active,
 .page-leave-active {
   transition: opacity 0.15s ease;

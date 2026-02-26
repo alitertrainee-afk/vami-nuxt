@@ -1,10 +1,10 @@
 <script setup>
-import { reactive } from "vue";
-import { useAuthStore } from "~/stores/auth.store.js";
-import Button from "../atoms/Button.vue";
-import FormField from "../molecules/FormField.vue";
-import Alert from "../atoms/Alert.vue";
-
+/**
+ * RegisterForm Organism
+ *
+ * Client-side validation + auth store register action.
+ * All components and composables are auto-imported by Nuxt.
+ */
 const emit = defineEmits(["success"]);
 
 const authStore = useAuthStore();
@@ -68,10 +68,14 @@ const submit = async () => {
 
 <template>
   <div>
-    <Alert v-if="authStore.error" :message="authStore.error" variant="error" />
+    <UiAtomsAlert
+      v-if="authStore.error"
+      :message="authStore.error"
+      variant="error"
+    />
 
     <form @submit.prevent="submit" class="space-y-2">
-      <FormField
+      <UiMoleculesFormField
         v-model="form.username"
         label="Username"
         type="text"
@@ -81,7 +85,7 @@ const submit = async () => {
         required
       />
 
-      <FormField
+      <UiMoleculesFormField
         v-model="form.email"
         label="Email address"
         type="email"
@@ -91,7 +95,7 @@ const submit = async () => {
         required
       />
 
-      <FormField
+      <UiMoleculesFormField
         v-model="form.password"
         label="Password"
         type="password"
@@ -101,7 +105,7 @@ const submit = async () => {
         required
       />
 
-      <FormField
+      <UiMoleculesFormField
         v-model="form.confirmPassword"
         label="Confirm password"
         type="password"
@@ -111,9 +115,9 @@ const submit = async () => {
         required
       />
 
-      <Button type="submit" :loading="authStore.isLoading" fullWidth>
+      <UiAtomsButton type="submit" :loading="authStore.isLoading" fullWidth>
         Create account
-      </Button>
+      </UiAtomsButton>
     </form>
   </div>
 </template>

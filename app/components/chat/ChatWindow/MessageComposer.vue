@@ -1,16 +1,51 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onBeforeUnmount } from "vue";
 
 const emit = defineEmits(["send"]);
 const messageInput = ref("");
+
+// E4: Typing indicator support
+const chatStore = useChatStore();
+const socket = useSocket();
+let typingTimeout = null;
+let isCurrentlyTyping = false;
+
+const emitTyping = () => {
+  if (!chatStore.activeChat) return;
+
+  if (!isCurrentlyTyping) {
+    isCurrentlyTyping = true;
+    socket.emit("user_typing", { roomId: chatStore.activeChat._id });
+  }
+
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    isCurrentlyTyping = false;
+    socket.emit("user_stopped_typing", { roomId: chatStore.activeChat._id });
+  }, 2000);
+};
+
+const stopTyping = () => {
+  if (isCurrentlyTyping && chatStore.activeChat) {
+    clearTimeout(typingTimeout);
+    isCurrentlyTyping = false;
+    socket.emit("user_stopped_typing", { roomId: chatStore.activeChat._id });
+  }
+};
 
 const submit = () => {
   const text = messageInput.value.trim();
   if (!text) return;
 
+  stopTyping();
   emit("send", text);
   messageInput.value = "";
 };
+
+onBeforeUnmount(() => {
+  stopTyping();
+  clearTimeout(typingTimeout);
+});
 </script>
 
 <template>
@@ -21,6 +56,7 @@ const submit = () => {
       >
         <textarea
           v-model="messageInput"
+          @input="emitTyping"
           @keydown.enter.prevent="submit"
           rows="1"
           placeholder="Type a message..."

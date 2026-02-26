@@ -1,38 +1,36 @@
 <script setup>
 import { onMounted, onBeforeUnmount, computed } from "vue";
-import { useAuthStore } from "~/stores/auth.store.js";
-import { useChatStore } from "~/stores/chat.store.js";
-import { useChatUI } from "~/composables/useChatUI.js";
-import { usePanelManager } from "~/composables/usePanelManager.js";
 
 // Components
 import ChatLayout from "~/components/chat/layout/ChatLayout.vue";
 import PanelContainer from "~/components/chat/layout/PanelContainer.vue";
 import ChatWindow from "~/components/chat/ChatWindow/ChatWindow.vue";
-
-// Views
 import MainChatList from "~/components/chat/LeftSidebar/views/MainChatList.vue";
 
 definePageMeta({
+  layout: "chat",
   middleware: "auth",
 });
 
 const authStore = useAuthStore();
 const chatStore = useChatStore();
-const chatUI = useChatUI();
-const { openPanel, panelStacks } = usePanelManager();
 
-// Automatically show the right sidebar if a panel is pushed to the right stack
-const isRightPanelOpen = computed(() => panelStacks.value.right.length > 0);
+// Consolidated panel manager (replaces useChatUI + old usePanelManager)
+const {
+  openPanel,
+  panelStacks,
+  showSidebar,
+  showChatWindow,
+  isInfoPanelOpen,
+  closeActiveChat,
+  toggleInfoPanel,
+} = usePanelManager();
 
 onMounted(async () => {
   if (authStore.token) {
-    chatStore.initializeSocket(authStore?.token);
+    chatStore.initializeSocket(authStore.token);
   }
-
-  // Initialize the left sidebar with the MainChatList view
   openPanel("left", MainChatList);
-
   await chatStore.loadConversations();
 });
 
@@ -41,23 +39,18 @@ onBeforeUnmount(() => {
 });
 
 const handleToggleInfo = () => {
-  if (isRightPanelOpen.value) {
-    panelStacks.value.right = [];
-  } else {
-    openPanel(
-      "right",
-      () => import("~/components/chat/RightSidebar/views/ChatInfoPanel.vue"),
-    );
-  }
+  toggleInfoPanel(
+    () => import("~/components/chat/RightSidebar/views/ChatInfoPanel.vue"),
+  );
 };
 </script>
 
 <template>
   <ChatLayout
-    :show-sidebar="chatUI.showSidebar.value"
-    :show-chat="chatUI.showChatWindow.value"
-    :show-info="isRightPanelOpen || chatUI.isInfoPanelOpen.value"
-    @close-chat="chatUI.closeActiveChat"
+    :show-sidebar="showSidebar"
+    :show-chat="showChatWindow"
+    :show-info="isInfoPanelOpen"
+    @close-chat="closeActiveChat"
     @close-info="panelStacks.right = []"
   >
     <template #sidebar>
@@ -66,9 +59,9 @@ const handleToggleInfo = () => {
 
     <template #chat>
       <ChatWindow
-        v-if="chatStore.activeChat"
+        v-if="chatStore?.activeChat"
         @toggle-info="handleToggleInfo"
-        @back="chatUI.closeActiveChat"
+        @back="closeActiveChat"
       />
 
       <div

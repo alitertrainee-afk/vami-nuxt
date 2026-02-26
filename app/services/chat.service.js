@@ -1,16 +1,15 @@
-// local imports
-import axiosInstance from "~/api/axios.instance.js";
+export function createChatService(apiFetch) {
+  return {
+    fetchConversations() {
+      return apiFetch("/chats");
+    },
 
-export const ChatService = {
-  async fetchConversations() {
-    return await axiosInstance.get("/chats");
-  },
+    accessChat(userId) {
+      return apiFetch("/chats", { method: "POST", body: { userId } });
+    },
 
-  async accessChat(userId) {
-    return await axiosInstance.post("/chats", { userId });
-  },
-
-  async fetchMessages(chatId, params = {}) {
-    return await axiosInstance.get(`/messages/${chatId}`, { params });
-  },
-};
+    fetchMessages(chatId, params = {}) {
+      return apiFetch(`/messages/${chatId}`, { params });
+    },
+  };
+}

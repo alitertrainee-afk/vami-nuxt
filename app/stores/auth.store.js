@@ -1,118 +1,148 @@
 // libs imports
 import { defineStore } from "pinia";
+import { ref, computed } from "vue";
 
-// local imports
-import { AuthService } from "~/services/auth.service.js";
+// services imports
+import { createAuthService } from "~/services/auth.service.js";
+
+// utils imports
 import {
   getLocalStorageItem,
   removeLocalStorageItem,
   setLocalStorageItem,
 } from "~/utils/localstorage.utils.js";
 
-export const useAuthStore = defineStore("auth", {
-  state: () => {
-    let user = null;
+export const useAuthStore = defineStore("auth", () => {
+  // state
+  const user = ref(_hydrateUser());
+  const token = ref(getLocalStorageItem("vami_token") || null);
+  const isLoading = ref(false);
+  const error = ref(null);
+
+  // getters
+  const isAuthenticated = computed(() => !!token.value && !!user.value);
+
+  // helpers
+  function _hydrateUser() {
     try {
       const raw = getLocalStorageItem("vami_user");
-      user = raw ? JSON.parse(raw) : null;
+      return raw ? JSON.parse(raw) : null;
     } catch {
       removeLocalStorageItem("vami_user");
+      return null;
     }
+  }
 
-    return {
-      user,
-      token: getLocalStorageItem("vami_token") || null,
-      isLoading: false,
-      error: null,
-    };
-  },
+  function _persistSession(userData, accessToken) {
+    user.value = userData;
+    token.value = accessToken;
+    setLocalStorageItem("vami_token", accessToken);
+    setLocalStorageItem("vami_user", JSON.stringify(userData));
+  }
 
-  getters: {
-    isAuthenticated: (state) => !!state.token && !!state.user,
-  },
+  function _clearSession() {
+    user.value = null;
+    token.value = null;
+    error.value = null;
+    removeLocalStorageItem("vami_token");
+    removeLocalStorageItem("vami_user");
+  }
 
-  actions: {
-    async login(credentials) {
-      this.isLoading = true;
-      this.error = null;
+  // actions
+  async function login(credentials) {
+    isLoading.value = true;
+    error.value = null;
 
-      try {
-        const response = await AuthService.login(credentials);
-        const { user, token } = response.data?.data;
+    try {
+      const { apiFetch } = useApiFetch();
+      const authService = createAuthService(apiFetch);
+      const response = await authService.login(credentials);
+      const { user: userData, token: accessToken } = response.data;
 
-        this.user = user;
-        this.token = token;
+      _persistSession(userData, accessToken);
+      return true;
+    } catch (err) {
+      error.value = err?.data?.message || err.message || "Login failed";
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
-        setLocalStorageItem("vami_token", token);
-        setLocalStorageItem("vami_user", JSON.stringify(user));
+  async function register(userData) {
+    isLoading.value = true;
+    error.value = null;
 
-        return true;
-      } catch (err) {
-        this.error = err.message;
-        return false;
-      } finally {
-        this.isLoading = false;
-      }
-    },
+    try {
+      const { apiFetch } = useApiFetch();
+      const authService = createAuthService(apiFetch);
+      const response = await authService.register(userData);
+      const { user: newUser, token: accessToken } = response.data;
 
-    async register(userData) {
-      this.isLoading = true;
-      this.error = null;
+      _persistSession(newUser, accessToken);
+      return true;
+    } catch (err) {
+      error.value = err?.data?.message || err.message || "Registration failed";
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
-      try {
-        const response = await AuthService.register(userData);
-        const { user, token } = response.data?.data;
+  /**
+   * Logout — clears local session and attempts server-side invalidation.
+   */
+  async function logout() {
+    try {
+      const { apiFetch } = useApiFetch();
+      const authService = createAuthService(apiFetch);
+      await authService.logout();
+    } catch {
+      // Proceed with local cleanup even if server call fails
+    }
+    _clearSession();
+  }
 
-        this.user = user;
-        this.token = token;
+  /**
+   * Attempt to refresh the access token silently.
+   * @returns {Promise<string|null>} New token or null on failure
+   */
+  async function refreshAccessToken() {
+    try {
+      const { apiFetch } = useApiFetch();
+      const authService = createAuthService(apiFetch);
+      const response = await authService.refresh();
+      const { user: newUser, token: newToken } = response.data;
 
-        setLocalStorageItem("vami_token", token);
-        setLocalStorageItem("vami_user", JSON.stringify(user));
+      _persistSession(newUser, newToken);
+      return newToken;
+    } catch {
+      await logout();
+      return null;
+    }
+  }
 
-        return true;
-      } catch (err) {
-        this.error = err.message;
-        return false;
-      } finally {
-        this.isLoading = false;
-      }
-    },
+  /** Clear the current error message. */
+  function clearError() {
+    error.value = null;
+  }
 
-    async logout() {
-      try {
-        await AuthService.logout();
-      } catch {
-        // Proceed with local cleanup even if the server call fails
-      }
-
-      this.user = null;
-      this.token = null;
-      this.error = null;
-      removeLocalStorageItem("vami_token");
-      removeLocalStorageItem("vami_user");
-    },
-
-    async refreshAccessToken() {
-      try {
-        const response = await AuthService.refresh();
-        const { user, token } = response.data?.data;
-
-        this.user = user;
-        this.token = token;
-
-        setLocalStorageItem("vami_token", token);
-        setLocalStorageItem("vami_user", JSON.stringify(user));
-
-        return token;
-      } catch {
-        // Refresh failed — force logout
-        await this.logout();
-        return null;
-      }
-    },
-
-    clearError() {
-      this.error = null;
-    },
-  },
+  // ---------------------------------------------------------------------------
+  // Public API
+  // ---------------------------------------------------------------------------
+  return {
+    // State
+    user,
+    token,
+    isLoading,
+    error,
+    // Getters
+    isAuthenticated,
+    // Actions
+    login,
+    register,
+    logout,
+    refreshAccessToken,
+    clearError,
+  };
 });

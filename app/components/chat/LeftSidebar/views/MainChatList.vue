@@ -10,16 +10,15 @@ import NewChatPanel from "./NewChatPanel.vue";
 import ChatListItem from "../ChatListItem.vue";
 import UserListItem from "../UserListItem.vue";
 
-// UI Imports
+// UI Imports - [Molecules]
 import DropdownMenu from "../../../ui/molecules/DropdownMenu.vue";
+
+// UI Imports - [Atoms]
 import Button from "../../../ui/atoms/Button.vue";
 import Tooltip from "../../../ui/atoms/Tooltip.vue";
 
-// Config & Hooks
-import { MAIN_MENU_ACTIONS } from "../config/sidebar.config.js";
-import { useChatStore } from "~/stores/chat.store.js";
-import { useAuthStore } from "~/stores/auth.store.js";
-import { usePanelManager } from "~/composables/usePanelManager.js";
+// Config
+import { MAIN_MENU_ACTIONS } from "~/components/chat/LeftSidebar/config/sidebar.config.js";
 
 const chatStore = useChatStore();
 const authStore = useAuthStore();

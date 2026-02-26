@@ -1,24 +1,10 @@
 <script setup>
-import { computed } from "vue";
-import { useAuthStore } from "~/stores/auth.store.js";
-import { useChatStore } from "~/stores/chat.store.js";
-
-// Icons
-import {
-  TickDouble02Icon,
-  Tick01Icon,
-  NotificationOff02Icon,
-  PinLocation02Icon,
-  Archive02Icon,
-  Delete02Icon,
-  UserBlock01Icon,
-  ArrowDown01Icon,
-} from "hugeicons-vue";
-
-// Components
+import { ArrowDown01Icon } from "hugeicons-vue";
 import BaseListItem from "../../ui/molecules/BaseListItem.vue";
 import Avatar from "../../ui/atoms/Avatar.vue";
 import DropdownMenu from "../../ui/molecules/DropdownMenu.vue";
+import { useChatItemDetails } from "~/composables/useChatItemDetails.js";
+import { CHAT_CONTEXT_ACTIONS } from "~/components/chat/LeftSidebar/config/chat-context.config.js";
 
 const props = defineProps({
   chat: { type: Object, required: true },
@@ -27,101 +13,12 @@ const props = defineProps({
 
 const emit = defineEmits(["click", "contextAction"]);
 
-const authStore = useAuthStore();
-const chatStore = useChatStore();
-
-// --- CONTEXT MENU ---
-const CHAT_CONTEXT_ACTIONS = [
-  { label: "Archive chat", icon: Archive02Icon, action: "archive" },
-  { label: "Mute notifications", icon: NotificationOff02Icon, action: "mute" },
-  { separator: true },
-  { label: "Pin chat", icon: PinLocation02Icon, action: "pin" },
-  { label: "Mark as unread", icon: TickDouble02Icon, action: "mark_unread" },
-  { separator: true },
-  { label: "Block", icon: UserBlock01Icon, action: "block", danger: true },
-  { label: "Delete chat", icon: Delete02Icon, action: "delete", danger: true },
-];
+const { details, formattedTime, leftIndicators, rightBadges } =
+  useChatItemDetails(() => props.chat);
 
 const handleAction = (action) => {
   emit("contextAction", { action, chat: props.chat });
 };
-
-// --- COMPUTED HELPERS ---
-const details = computed(() => {
-  if (props.chat?.isGroupChat) {
-    return { name: props.chat.chatName, avatar: null, isOnline: false };
-  }
-  const otherUser = props.chat?.participants?.find(
-    (p) => p?._id !== authStore.user?._id,
-  );
-  return {
-    name: otherUser?.username || "Unknown User",
-    avatar: otherUser?.profile?.avatar,
-    isOnline: chatStore.onlineUsers.has(otherUser?._id),
-  };
-});
-
-const formattedTime = computed(() => {
-  if (!props.chat?.latestMessage) return "";
-  return new Date(props.chat.latestMessage.createdAt).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-});
-
-const leftIndicators = computed(() => {
-  const indicators = [];
-  const latestMsg = props.chat?.latestMessage;
-  const isMine = latestMsg?.sender === authStore.user?._id;
-
-  if (isMine) {
-    const isRead = latestMsg?.status === "read";
-    indicators.push({
-      id: "receipt",
-      isIcon: true,
-      component: isRead ? TickDouble02Icon : Tick01Icon,
-      class: isRead ? "text-blue-500" : "text-gray-400",
-    });
-  }
-  if (props.chat?.isMentioned) {
-    indicators.push({
-      id: "mention",
-      isIcon: false,
-      text: "@",
-      class:
-        "bg-gray-200 text-gray-600 rounded-full px-1.5 text-[10px] font-bold flex items-center",
-    });
-  }
-  return indicators;
-});
-
-const rightBadges = computed(() => {
-  const badges = [];
-  if (props.chat?.isMuted)
-    badges.push({
-      id: "muted",
-      isIcon: true,
-      component: NotificationOff02Icon,
-      class: "text-gray-400",
-    });
-  if (props.chat?.isPinned)
-    badges.push({
-      id: "pinned",
-      isIcon: true,
-      component: PinLocation02Icon,
-      class: "text-gray-400 transform rotate-45",
-    });
-  if (props.chat?.unreadCount > 0) {
-    badges.push({
-      id: "unread",
-      isIcon: false,
-      text: props.chat.unreadCount,
-      class:
-        "bg-green-500 text-white text-[11px] font-bold px-1.5 py-0 min-w-[20px] h-[20px] rounded-full flex items-center justify-center",
-    });
-  }
-  return badges;
-});
 </script>
 
 <template>

@@ -1,6 +1,11 @@
 <script setup>
+// libs imports
 import { computed } from "vue";
+
+// utils imports
 import { getChatDisplayName } from "~/utils/common.utils.js";
+
+// stores imports
 import { useChatStore } from "~/stores/chat.store.js";
 import { useAuthStore } from "~/stores/auth.store.js";
 

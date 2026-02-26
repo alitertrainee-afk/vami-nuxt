@@ -1,5 +1,6 @@
 <script setup>
 definePageMeta({
+  layout: "auth",
   middleware: "guest",
 });
 
@@ -9,15 +10,19 @@ const handleSuccess = () => {
 </script>
 
 <template>
-  <UiTemplatesAuthTemplate title="Sign in to Vami">
-    <template #subtitle>
-      <UiMoleculesAuthFooterLink
-        text="Or"
-        linkText="create a new account"
-        to="/register"
-      />
-    </template>
+  <div>
+    <h2 class="mt-6 text-3xl font-extrabold text-gray-900 text-center">
+      Sign in to Vami
+    </h2>
+    <UiMoleculesAuthFooterLink
+      text="Or"
+      linkText="create a new account"
+      to="/register"
+      class="text-center mt-1"
+    />
 
-    <UiOrganismsLoginForm @success="handleSuccess" />
-  </UiTemplatesAuthTemplate>
+    <div class="mt-6">
+      <UiOrganismsLoginForm @success="handleSuccess" />
+    </div>
+  </div>
 </template>

@@ -110,7 +110,11 @@ const chatTimeline = computed(() => {
 
 <template>
   <div
-    ref="messagesContainer"
+    :ref="
+      (el) => {
+        messagesContainer = el;
+      }
+    "
     class="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col relative custom-scrollbar z-10"
   >
     <div v-if="isLoading" class="flex justify-center py-2 shrink-0 mb-4">
