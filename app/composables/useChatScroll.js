@@ -56,7 +56,10 @@ export function useChatScroll({ messages, hasNext, loadMore }) {
   watch(
     () => messages.value?.length,
     async (newVal, oldVal) => {
+      console.log("🚀 ~ useChatScroll ~ oldVal:", oldVal);
+      console.log("🚀 ~ useChatScroll ~ newVal:", newVal);
       const container = messagesContainer.value;
+      console.log("🚀 ~ useChatScroll ~ container:", container);
       if (!container) return;
 
       // Initial load: Snap to bottom
@@ -68,7 +71,7 @@ export function useChatScroll({ messages, hasNext, loadMore }) {
       // If the user was already near the bottom, auto-scroll for the new message
       const isNearBottom =
         container.scrollHeight - container.scrollTop - container.clientHeight <
-        100;
+        200;
       if (isNearBottom) {
         await scrollToBottom();
       }

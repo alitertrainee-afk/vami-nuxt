@@ -4,6 +4,7 @@ import { ref, computed } from "vue";
 
 // services imports
 import { createAuthService } from "~/services/auth.service.js";
+import { createUserService } from "~/services/user.service.js";
 
 // utils imports
 import {
@@ -122,6 +123,52 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  /**
+   * Update the authenticated user's profile fields.
+   */
+  async function updateProfile(data) {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      const { apiFetch } = useApiFetch();
+      const userService = createUserService(apiFetch);
+      const response = await userService.updateProfile(data);
+      const updatedUser = response.data;
+
+      user.value = updatedUser;
+      setLocalStorageItem("vami_user", JSON.stringify(updatedUser));
+      return true;
+    } catch (err) {
+      error.value =
+        err?.data?.message || err.message || "Profile update failed";
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /**
+   * Change the authenticated user's password.
+   */
+  async function changePassword(data) {
+    isLoading.value = true;
+    error.value = null;
+
+    try {
+      const { apiFetch } = useApiFetch();
+      const userService = createUserService(apiFetch);
+      await userService.changePassword(data);
+      return true;
+    } catch (err) {
+      error.value =
+        err?.data?.message || err.message || "Password change failed";
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   /** Clear the current error message. */
   function clearError() {
     error.value = null;
@@ -143,6 +190,8 @@ export const useAuthStore = defineStore("auth", () => {
     register,
     logout,
     refreshAccessToken,
+    updateProfile,
+    changePassword,
     clearError,
   };
 });

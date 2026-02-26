@@ -20,6 +20,7 @@ export function useApiFetch() {
       // Handle 401 — attempt silent token refresh
       if (error?.response?.status === 401 && !options._retry) {
         const refreshed = await authStore.refreshAccessToken();
+        console.log("🚀 ~ apiFetch ~ refreshed:", refreshed);
         if (refreshed) {
           // Retry with new token
           return apiFetch(url, {
@@ -31,8 +32,7 @@ export function useApiFetch() {
             },
           });
         } else {
-          // Refresh failed — redirect to login
-          navigateTo("/login", { replace: true });
+          return navigateTo("/login", { replace: true });
         }
       }
       throw error;

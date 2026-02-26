@@ -28,7 +28,7 @@ const { openPanel } = usePanelManager();
 const handleMenuSelect = (action) => {
   if (action === "logout") {
     authStore?.logout();
-    navigateTo("/login");
+    return navigateTo("/login");
   }
 };
 
