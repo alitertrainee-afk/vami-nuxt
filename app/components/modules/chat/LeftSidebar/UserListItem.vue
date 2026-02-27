@@ -1,8 +1,7 @@
 <script setup>
 import { computed } from "vue";
-import { useChatStore } from "~/stores/chat.store.js";
-import Avatar from "../../ui/atoms/Avatar.vue";
-import BaseListItem from "../../ui/molecules/BaseListItem.vue";
+import Avatar from "../../../ui/atoms/Avatar.vue";
+import BaseListItem from "../../../ui/molecules/BaseListItem.vue";
 const props = defineProps({
   user: { type: Object, required: true },
 });

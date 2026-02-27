@@ -75,7 +75,7 @@ const submit = async () => {
     />
 
     <form @submit.prevent="submit" class="space-y-2">
-      <UiMoleculesFormField
+      <UiAtomsInput
         v-model="form.username"
         label="Username"
         type="text"
@@ -85,7 +85,7 @@ const submit = async () => {
         required
       />
 
-      <UiMoleculesFormField
+      <UiAtomsInput
         v-model="form.email"
         label="Email address"
         type="email"
@@ -95,7 +95,7 @@ const submit = async () => {
         required
       />
 
-      <UiMoleculesFormField
+      <UiAtomsInput
         v-model="form.password"
         label="Password"
         type="password"
@@ -105,7 +105,7 @@ const submit = async () => {
         required
       />
 
-      <UiMoleculesFormField
+      <UiAtomsInput
         v-model="form.confirmPassword"
         label="Confirm password"
         type="password"

@@ -10,14 +10,14 @@ import NewChatPanel from "./NewChatPanel.vue";
 import SidebarBody from "../SidebarBody.vue";
 
 // UI Imports - [Molecules]
-import DropdownMenu from "../../../ui/molecules/DropdownMenu.vue";
+import DropdownMenu from "../../../../ui/molecules/DropdownMenu.vue";
 
 // UI Imports - [Atoms]
-import Button from "../../../ui/atoms/Button.vue";
-import Tooltip from "../../../ui/atoms/Tooltip.vue";
+import Button from "../../../../ui/atoms/Button.vue";
+import Tooltip from "../../../../ui/atoms/Tooltip.vue";
 
 // Config
-import { MAIN_MENU_ACTIONS } from "~/components/chat/LeftSidebar/config/sidebar.config.js";
+import { MAIN_MENU_ACTIONS } from "~/components/modules/chat/LeftSidebar/config/sidebar.config.js";
 
 const chatStore = useChatStore();
 const authStore = useAuthStore();

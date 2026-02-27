@@ -1,4 +1,4 @@
-import { socketClient } from "~/lib/socket.client.js";
+import { socketClient } from "~/components/modules/chat/lib/socket.client.js";
 
 export default defineNuxtPlugin(() => {
   return {

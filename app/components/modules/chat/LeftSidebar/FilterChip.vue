@@ -2,11 +2,8 @@
 // libs imports
 import { computed } from "vue";
 
-// stores imports
-import { useChatStore } from "~/stores/chat.store.js";
-
 // UI Imports - [Atoms]
-import Button from "../../ui/atoms/Button.vue";
+import Button from "../../../ui/atoms/Button.vue";
 
 // Config
 import { SIDEBAR_FILTERS } from "./config/filter.config.js";

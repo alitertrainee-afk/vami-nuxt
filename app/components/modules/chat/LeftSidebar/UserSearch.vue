@@ -1,10 +1,9 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useDebouncedRef } from "~/composables/useDebounce.js";
-import { useChatStore } from "~/stores/chat.store.js";
 
 // Import our new Molecule
-import SearchInput from "../../ui/molecules/SearchInput.vue";
+import SearchInput from "../../../ui/molecules/SearchInput.vue";
 
 const chatStore = useChatStore();
 const rawInput = ref(chatStore.searchQuery);

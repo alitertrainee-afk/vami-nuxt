@@ -3,7 +3,7 @@
  * ProfileForm Organism
  *
  * Two-section form: profile info + change password.
- * Re-uses UiAtomsAvatar, UiMoleculesFormField, UiAtomsButton, UiAtomsAlert.
+ * Re-uses UiAtomsAvatar, UiAtomsInput, UiAtomsButton, UiAtomsAlert.
  */
 import { reactive, ref, watch } from "vue";
 
@@ -168,7 +168,7 @@ async function submitPassword() {
             size="lg"
           />
           <div class="flex-1">
-            <UiMoleculesFormField
+            <UiAtomsInput
               v-model="profile.avatar"
               label="Avatar URL"
               type="url"
@@ -180,7 +180,7 @@ async function submitPassword() {
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
-          <UiMoleculesFormField
+          <UiAtomsInput
             v-model="profile.username"
             label="Username"
             placeholder="johndoe"
@@ -189,7 +189,7 @@ async function submitPassword() {
             required
           />
 
-          <UiMoleculesFormField
+          <UiAtomsInput
             v-model="profile.email"
             label="Email"
             type="email"
@@ -279,7 +279,7 @@ async function submitPassword() {
       />
 
       <form @submit.prevent="submitPassword" class="space-y-1">
-        <UiMoleculesFormField
+        <UiAtomsInput
           v-model="password.currentPassword"
           label="Current Password"
           type="password"
@@ -290,7 +290,7 @@ async function submitPassword() {
         />
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
-          <UiMoleculesFormField
+          <UiAtomsInput
             v-model="password.newPassword"
             label="New Password"
             type="password"
@@ -300,7 +300,7 @@ async function submitPassword() {
             required
           />
 
-          <UiMoleculesFormField
+          <UiAtomsInput
             v-model="password.confirmPassword"
             label="Confirm New Password"
             type="password"

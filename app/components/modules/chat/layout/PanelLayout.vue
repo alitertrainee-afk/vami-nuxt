@@ -1,6 +1,6 @@
 <script setup>
 import { ArrowLeft02Icon } from "hugeicons-vue";
-import Button from "../../ui/atoms/Button.vue";
+import Button from "../../../ui/atoms/Button.vue";
 
 const props = defineProps({
   title: { type: String, required: true },

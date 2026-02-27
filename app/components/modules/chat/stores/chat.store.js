@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { ref, computed, shallowRef } from "vue";
-import { createChatService } from "~/services/chat.service.js";
+import { createChatService } from "../services/chat.service.js";
 import { createUserService } from "~/services/user.service.js";
-import { useAuthStore } from "./auth.store.js";
+import { useAuthStore } from "~/stores/auth.store.js";
 
 /**
  * Chat Store — Composition API style.

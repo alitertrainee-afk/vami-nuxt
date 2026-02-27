@@ -13,7 +13,7 @@ definePageMeta({
       <h2 class="text-2xl font-extrabold text-gray-900 mb-6">
         Profile Settings
       </h2>
-      <UiOrganismsProfileForm />
+      <ModulesAuthProfileForm />
     </div>
   </div>
 </template>

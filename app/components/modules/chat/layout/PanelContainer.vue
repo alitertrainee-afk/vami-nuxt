@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { usePanelManager } from "~/composables/usePanelManager.js";
+import { usePanelManager } from "~/components/modules/chat/composables/usePanelManager.js";
 
 const props = defineProps({
   side: {

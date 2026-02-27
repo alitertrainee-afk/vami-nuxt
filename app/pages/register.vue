@@ -14,7 +14,7 @@ const handleSuccess = () => {
     <h2 class="mt-6 text-3xl font-extrabold text-gray-900 text-center">
       Create your account
     </h2>
-    <UiMoleculesAuthFooterLink
+    <UiMoleculesFooterLink
       text="Already have an account?"
       linkText="Sign in"
       to="/login"
@@ -22,7 +22,7 @@ const handleSuccess = () => {
     />
 
     <div class="mt-6">
-      <UiOrganismsRegisterForm @success="handleSuccess" />
+      <ModulesAuthRegisterForm @success="handleSuccess" />
     </div>
   </div>
 </template>

@@ -1,10 +1,10 @@
 <script setup>
 import { ArrowDown01Icon } from "hugeicons-vue";
-import BaseListItem from "../../ui/molecules/BaseListItem.vue";
-import Avatar from "../../ui/atoms/Avatar.vue";
-import DropdownMenu from "../../ui/molecules/DropdownMenu.vue";
-import { useChatItemDetails } from "~/composables/useChatItemDetails.js";
-import { CHAT_CONTEXT_ACTIONS } from "~/components/chat/LeftSidebar/config/chat-context.config.js";
+import BaseListItem from "../../../ui/molecules/BaseListItem.vue";
+import Avatar from "../../../ui/atoms/Avatar.vue";
+import DropdownMenu from "../../../ui/molecules/DropdownMenu.vue";
+import { useChatItemDetails } from "~/components/modules/chat/composables/useChatItemDetails.js";
+import { CHAT_CONTEXT_ACTIONS } from "~/components/modules/chat/LeftSidebar/config/chat-context.config.js";
 
 const props = defineProps({
   chat: { type: Object, required: true },

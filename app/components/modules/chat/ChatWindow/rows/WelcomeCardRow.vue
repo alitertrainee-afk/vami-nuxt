@@ -1,5 +1,5 @@
 <script setup>
-import Avatar from "../../../ui/atoms/Avatar.vue";
+import Avatar from "../../../../ui/atoms/Avatar.vue";
 
 defineProps({
   chatName: { type: String, required: true },

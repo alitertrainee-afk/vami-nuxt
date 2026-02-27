@@ -1,6 +1,6 @@
 <script setup>
 import MessageBubble from "../MessageBubble.vue";
-import Avatar from "../../../ui/atoms/Avatar.vue";
+import Avatar from "../../../../ui/atoms/Avatar.vue";
 
 const props = defineProps({
   message: { type: Object, required: true },

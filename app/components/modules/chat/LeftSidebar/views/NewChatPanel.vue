@@ -7,11 +7,11 @@ import { UserGroupIcon, UserAdd01Icon, UserMultipleIcon } from "hugeicons-vue";
 import PanelLayout from "../../layout/PanelLayout.vue";
 
 // UI Imports - [Molecules]
-import BaseListItem from "../../../ui/molecules/BaseListItem.vue";
-import SearchInput from "../../../ui/molecules/SearchInput.vue";
+import BaseListItem from "../../../../ui/molecules/BaseListItem.vue";
+import SearchInput from "../../../../ui/molecules/SearchInput.vue";
 
 // Hooks
-import { usePanelManager } from "~/composables/usePanelManager.js";
+import { usePanelManager } from "~/components/modules/chat/composables/usePanelManager.js";
 
 const { closePanel } = usePanelManager();
 

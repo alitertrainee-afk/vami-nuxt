@@ -2,10 +2,10 @@
 import { onMounted, onBeforeUnmount, computed } from "vue";
 
 // Components
-import ChatLayout from "~/components/chat/layout/ChatLayout.vue";
-import PanelContainer from "~/components/chat/layout/PanelContainer.vue";
-import ChatWindow from "~/components/chat/ChatWindow/ChatWindow.vue";
-import MainChatList from "~/components/chat/LeftSidebar/views/MainChatList.vue";
+import ChatLayout from "~/components/modules/chat/layout/ChatLayout.vue";
+import PanelContainer from "~/components/modules/chat/layout/PanelContainer.vue";
+import ChatWindow from "~/components/modules/chat/ChatWindow/ChatWindow.vue";
+import MainChatList from "~/components/modules/chat/LeftSidebar/views/MainChatList.vue";
 
 definePageMeta({
   layout: "chat",
@@ -40,7 +40,8 @@ onBeforeUnmount(() => {
 
 const handleToggleInfo = () => {
   toggleInfoPanel(
-    () => import("~/components/chat/RightSidebar/views/ChatInfoPanel.vue"),
+    () =>
+      import("~/components/modules/chat/RightSidebar/views/ChatInfoPanel.vue"),
   );
 };
 </script>

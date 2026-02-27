@@ -11,6 +11,14 @@ export default defineNuxtConfig({
   // Pinia state management
   modules: ["@pinia/nuxt"],
 
+  // Auto-import module composables & stores
+  imports: {
+    dirs: [
+      "components/modules/chat/composables",
+      "components/modules/chat/stores",
+    ],
+  },
+
   // Global CSS
   css: ["~/assets/css/style.css"],
 

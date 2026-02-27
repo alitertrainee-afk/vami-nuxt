@@ -3,10 +3,9 @@
 import { computed } from "vue";
 
 // utils imports
-import { getChatDisplayName } from "~/utils/common.utils.js";
+import { getChatDisplayName } from "~/components/modules/chat/utils/chat.utils.js";
 
 // stores imports
-import { useChatStore } from "~/stores/chat.store.js";
 import { useAuthStore } from "~/stores/auth.store.js";
 
 // Icons
@@ -18,7 +17,7 @@ import {
 } from "hugeicons-vue";
 
 // UI Imports - [Atoms]
-import Avatar from "../../ui/atoms/Avatar.vue";
+import Avatar from "../../../ui/atoms/Avatar.vue";
 
 const chatStore = useChatStore();
 const authStore = useAuthStore();

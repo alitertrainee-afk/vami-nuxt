@@ -1,6 +1,6 @@
 <script setup>
 // UI Imports - [Atoms]
-import Button from "../../../ui/atoms/Button.vue";
+import Button from "../../../../ui/atoms/Button.vue";
 
 defineProps({
   showCta: { type: Boolean, default: false },

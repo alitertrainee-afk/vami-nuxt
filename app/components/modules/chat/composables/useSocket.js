@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { socketClient } from "~/lib/socket.client.js";
+import { socketClient } from "../lib/socket.client.js";
 
 // Singleton reactive state
 const isConnected = ref(false);
