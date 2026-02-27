@@ -1,11 +1,14 @@
 <script setup>
+import { ref, computed } from "vue";
 import ChatHeader from "./ChatHeader.vue";
-import ChatMessageList from "./ChatMessageList.vue";
+import ChatBody from "./ChatBody.vue";
 import MessageComposer from "./MessageComposer.vue";
 import ConnectionBanner from "./ConnectionBanner.vue";
 
 const chatStore = useChatStore();
 const authStore = useAuthStore();
+
+const chatBodyRef = ref(null);
 
 defineEmits(["back", "toggle-info"]);
 
@@ -15,7 +18,11 @@ const handleLoadMore = () => {
 
 const handleSend = (content) => {
   chatStore.sendMessage(content);
+  chatBodyRef.value?.scrollToBottom();
 };
+
+const currentUserId = computed(() => authStore.user?._id);
+const typingUsers = computed(() => chatStore.typingUsers);
 </script>
 
 <template>
@@ -32,11 +39,14 @@ const handleSend = (content) => {
     </header>
 
     <main class="flex-1 min-h-0 min-w-0 relative z-10 flex flex-col">
-      <ChatMessageList
+      <ChatBody
+        ref="chatBodyRef"
         :messages="chatStore.messages"
         :isLoading="chatStore.isLoadingMessages"
         :hasNext="chatStore.pagination?.hasNext"
-        :currentUserId="authStore.user?._id"
+        :currentUserId="currentUserId"
+        :activeChat="chatStore.activeChat"
+        :typingUsers="typingUsers"
         :loadMore="handleLoadMore"
         class="flex-1"
       />

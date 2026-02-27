@@ -1,18 +1,25 @@
 <script setup>
+// libs imports
 import { computed } from "vue";
+
+// stores imports
 import { useChatStore } from "~/stores/chat.store.js";
 
 // UI Imports - [Atoms]
 import Button from "../../ui/atoms/Button.vue";
 
+// Config
+import { SIDEBAR_FILTERS } from "./config/filter.config.js";
+
 const chatStore = useChatStore();
 
-// Dynamically generate filters so counts are reactive
-const filters = computed(() => [
-  { key: "all", label: "All" },
-  { key: "unread", label: "Unread", count: chatStore.unreadChatsCount },
-  { key: "groups", label: "Groups" },
-]);
+// Merge config with reactive count from store
+const filters = computed(() =>
+  SIDEBAR_FILTERS.map((f) => ({
+    ...f,
+    count: f.countKey ? chatStore[f.countKey] : undefined,
+  })),
+);
 
 const buttonVariant = (key) =>
   chatStore.activeFilter === key ? "soft-success" : "soft";

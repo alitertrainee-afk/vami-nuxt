@@ -1,5 +1,7 @@
 <script setup>
-defineProps({ item: { type: Object, required: true } });
+defineProps({
+  content: { type: String, required: true },
+});
 </script>
 
 <template>
@@ -7,7 +9,7 @@ defineProps({ item: { type: Object, required: true } });
     <span
       class="bg-yellow-50 text-yellow-800 border border-yellow-100 text-[13px] px-3 py-1 rounded-full text-center max-w-[80%]"
     >
-      {{ item.content }}
+      {{ content }}
     </span>
   </div>
 </template>

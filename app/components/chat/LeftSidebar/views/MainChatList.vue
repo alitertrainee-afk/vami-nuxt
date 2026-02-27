@@ -7,8 +7,7 @@ import PanelLayout from "../../layout/PanelLayout.vue";
 import UserSearch from "../UserSearch.vue";
 import FilterChip from "../FilterChip.vue";
 import NewChatPanel from "./NewChatPanel.vue";
-import ChatListItem from "../ChatListItem.vue";
-import UserListItem from "../UserListItem.vue";
+import SidebarBody from "../SidebarBody.vue";
 
 // UI Imports - [Molecules]
 import DropdownMenu from "../../../ui/molecules/DropdownMenu.vue";
@@ -88,60 +87,16 @@ const handleChatContextAction = ({ action, chat }) => {
       <FilterChip v-show="!chatStore.searchQuery" />
     </template>
 
-    <div v-if="chatStore.isLoadingChats" class="p-8 text-center text-gray-400">
-      <span class="animate-pulse">Loading...</span>
-    </div>
-
-    <div v-else class="flex-1 overflow-y-auto">
-      <div v-if="chatStore.filteredConversations.length > 0">
-        <div
-          v-if="chatStore.searchQuery"
-          class="px-4 py-2 text-[11px] font-bold tracking-wider text-gray-400 uppercase bg-gray-50"
-        >
-          Recent Chats
-        </div>
-        <ul class="divide-y divide-gray-50">
-          <li v-for="chat in chatStore.filteredConversations" :key="chat?._id">
-            <ChatListItem
-              :chat="chat"
-              :isActive="chatStore.activeChat?._id === chat._id"
-              @click="chatStore.setActiveChat(chat)"
-              @contextAction="handleChatContextAction"
-            />
-          </li>
-        </ul>
-      </div>
-
-      <div v-if="chatStore.searchQuery && chatStore.searchResults.length > 0">
-        <div
-          class="px-4 py-2 text-[11px] font-bold tracking-wider text-gray-400 uppercase bg-gray-50"
-        >
-          Global Search Results
-        </div>
-        <ul class="divide-y divide-gray-50">
-          <li v-for="user in chatStore.searchResults" :key="user._id">
-            <UserListItem :user="user" @click="handleUserClick" />
-          </li>
-        </ul>
-      </div>
-
-      <div
-        v-if="
-          !chatStore.filteredConversations.length &&
-          (!chatStore.searchQuery || !chatStore.searchResults.length)
-        "
-        class="p-8 text-center text-gray-500 flex flex-col items-center gap-2"
-      >
-        <span class="text-sm">No results found.</span>
-        <Button
-          v-if="!chatStore.searchQuery"
-          variant="soft"
-          size="sm"
-          @click="handleNewChatClick"
-        >
-          Start a new chat
-        </Button>
-      </div>
-    </div>
+    <SidebarBody
+      :isLoadingChats="chatStore.isLoadingChats"
+      :filteredConversations="chatStore.filteredConversations"
+      :searchQuery="chatStore.searchQuery"
+      :searchResults="chatStore.searchResults"
+      :activeChatId="chatStore.activeChat?._id"
+      :onChatSelect="chatStore.setActiveChat"
+      :onChatContextAction="handleChatContextAction"
+      :onUserClick="handleUserClick"
+      :onNewChat="handleNewChatClick"
+    />
   </PanelLayout>
 </template>
