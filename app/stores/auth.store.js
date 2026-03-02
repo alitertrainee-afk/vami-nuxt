@@ -104,10 +104,6 @@ export const useAuthStore = defineStore("auth", () => {
     _clearSession();
   }
 
-  /**
-   * Attempt to refresh the access token silently.
-   * @returns {Promise<string|null>} New token or null on failure
-   */
   async function refreshAccessToken() {
     try {
       const { apiFetch } = useApiFetch();

@@ -38,24 +38,35 @@ function injectDateSeparators(items) {
 }
 
 // --- Sender cluster detection ---
+const CLUSTER_GAP_MS = 10 * 60 * 1000; // 10 minutes
+
 function injectSenderClusters(items) {
   let lastSenderId = null;
+  let lastTimestamp = null;
 
   return items.map((item) => {
     if (item.type !== "message") {
       lastSenderId = null;
+      lastTimestamp = null;
       return item;
     }
 
     if (item.isSystemMessage) {
       lastSenderId = null;
+      lastTimestamp = null;
       return { ...item, type: "system_alert" };
     }
 
     const senderId =
       typeof item.sender === "object" ? item.sender?._id : item.sender;
-    const isFirstInCluster = senderId !== lastSenderId;
+    const currentTimestamp = new Date(item.createdAt).getTime();
+    const timeDiff = lastTimestamp
+      ? currentTimestamp - lastTimestamp
+      : Infinity;
+    const isFirstInCluster =
+      senderId !== lastSenderId || timeDiff > CLUSTER_GAP_MS;
     lastSenderId = senderId;
+    lastTimestamp = currentTimestamp;
 
     return { ...item, type: "message", isFirstInCluster };
   });

@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@iconify-icons/tabler": "^1.2.95",
     "@iconify-json/tabler": "^1.2.27",
     "@pinia/nuxt": "^0.11.3",
     "@tailwindcss/vite": "^4.2.1",
@@ -21,5 +22,8 @@
     "tailwindcss": "^4.2.1",
     "vue": "^3.5.28",
     "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@iconify/vue": "^5.0.0"
   }
 }

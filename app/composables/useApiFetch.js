@@ -32,7 +32,7 @@ export function useApiFetch() {
             },
           });
         } else {
-          return navigateTo("/login", { replace: true });
+          navigateTo("/login", { replace: true });
         }
       }
       throw error;

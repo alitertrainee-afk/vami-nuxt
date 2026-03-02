@@ -1,4 +1,6 @@
 <script setup>
+import { Icon } from "@iconify/vue";
+
 import MessageBubble from "../MessageBubble.vue";
 import Avatar from "../../../../ui/atoms/Avatar.vue";
 
@@ -8,21 +10,25 @@ const props = defineProps({
   isFirstInCluster: { type: Boolean, default: true },
 });
 
-const senderName = (() => {
+const senderName = computed(() => {
   if (props.isMe) return null;
+
   if (typeof props.message.sender === "object") {
     return props.message.sender?.username || null;
   }
-  return props.message.senderName || null;
-})();
 
-const senderAvatar = (() => {
+  return props.message.senderName || null;
+});
+
+const senderAvatar = computed(() => {
   if (props.isMe) return null;
+
   if (typeof props.message.sender === "object") {
     return props.message.sender?.profile?.avatar || null;
   }
+
   return null;
-})();
+});
 </script>
 
 <template>
@@ -34,7 +40,7 @@ const senderAvatar = (() => {
     ]"
   >
     <!-- Avatar zone (only other users, first in cluster) -->
-    <div class="w-8 shrink-0 self-end mb-0.5">
+    <div class="w-8 shrink-0 self-start mb-0.5">
       <Avatar
         v-if="!isMe && isFirstInCluster"
         :src="senderAvatar"
@@ -55,25 +61,12 @@ const senderAvatar = (() => {
 
     <!-- Hover actions zone -->
     <div
-      class="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150 self-center"
+      class="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-75 self-center"
     >
       <button
-        class="p-1 rounded-full hover:bg-gray-200/60 text-gray-400 hover:text-gray-600 transition-colors"
-        title="React"
+        class="flex items-center justify-center w-7 h-7 rounded-full bg-white shadow-sm hover:shadow-md transition-all duration-150 cursor-pointer"
       >
-        <svg
-          class="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
+        <Icon icon="tabler:mood-smile" class="w-5 h-5 text-gray-600" />
       </button>
     </div>
   </div>
