@@ -201,6 +201,26 @@ export const useChatStore = defineStore("chat", () => {
     }
   }
 
+  async function jumpToLatest() {
+    if (!activeChat.value) return;
+    isLoadingMessages.value = true;
+    try {
+      const { chatService } = _getServices();
+      const response = await chatService.fetchMessages(activeChat.value._id, {
+        page: 1,
+        limit: 20,
+      });
+      const { messages: msgs, pagination: pag } = response.data;
+      messages.value = msgs;
+      currentPage.value = 1;
+      pagination.value = pag;
+    } catch (err) {
+      console.error("[ChatStore] Jump to latest failed:", err);
+    } finally {
+      isLoadingMessages.value = false;
+    }
+  }
+
   async function setActiveChatFromUser(userId) {
     try {
       const { chatService } = _getServices();
@@ -358,6 +378,7 @@ export const useChatStore = defineStore("chat", () => {
     loadConversations,
     setActiveChat,
     loadMoreMessages,
+    jumpToLatest,
     setActiveChatFromUser,
     sendMessage,
     initializeSocket,

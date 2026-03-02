@@ -24,9 +24,9 @@ const authStore = useAuthStore();
 const { openPanel } = usePanelManager();
 
 // Handlers
-const handleMenuSelect = (action) => {
+const handleMenuSelect = async (action) => {
   if (action === "logout") {
-    authStore?.logout();
+    await authStore?.logout();
     return navigateTo("/login");
   }
 };

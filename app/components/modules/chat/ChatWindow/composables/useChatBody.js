@@ -1,27 +1,19 @@
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from "vue";
 import { TIMELINE_TRANSFORMS } from "../config/timeline-pipeline.config.js";
 
-/**
- * useChatBody — owns scroll behaviour + timeline computation for ChatBody.
- *
- * @param {Object} opts
- * @param {import('vue').Ref<Array>}   opts.messages     - raw messages from store
- * @param {import('vue').Ref<boolean>} opts.hasNext      - whether older pages exist
- * @param {Function}                   opts.loadMore     - fetches next page
- * @param {import('vue').Ref<string>}  opts.currentUserId
- * @param {import('vue').Ref<Object>}  opts.activeChat
- * @param {import('vue').Ref<Set>}     opts.typingUsers
- */
 export function useChatBody({
   messages,
   hasNext,
+  hasPrev,
   loadMore,
+  jumpToLatest,
   currentUserId,
   activeChat,
   typingUsers,
 }) {
   const containerRef = ref(null);
   const isFetchingMore = ref(false);
+  const showScrollToBottom = ref(false);
 
   // --- Timeline pipeline ---
   const timelineItems = computed(() => {
@@ -43,6 +35,15 @@ export function useChatBody({
   });
 
   // --- Scroll helpers ---
+  const _isNearBottom = () => {
+    const container = containerRef.value;
+    if (!container) return true;
+    return (
+      container.scrollHeight - container.scrollTop - container.clientHeight <
+      200
+    );
+  };
+
   const scrollToBottom = async () => {
     await nextTick();
     await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -53,9 +54,23 @@ export function useChatBody({
     container.scrollTop = container.scrollHeight;
   };
 
+  const handleJumpToBottom = async () => {
+    if (hasPrev?.value) {
+      // User has paginated past page 1 — re-fetch latest messages
+      await jumpToLatest();
+      await scrollToBottom();
+    } else {
+      // Already on page 1 — just scroll
+      await scrollToBottom();
+    }
+  };
+
   const handleScroll = async () => {
     const container = containerRef.value;
     if (!container) return;
+
+    // Update floating button visibility
+    showScrollToBottom.value = !_isNearBottom();
 
     if (container.scrollTop <= 100) {
       if (isFetchingMore.value || !hasNext.value) return;
@@ -101,10 +116,7 @@ export function useChatBody({
       }
 
       // Near-bottom: auto-scroll for new message
-      const isNearBottom =
-        container.scrollHeight - container.scrollTop - container.clientHeight <
-        200;
-      if (isNearBottom) {
+      if (_isNearBottom()) {
         await scrollToBottom();
       }
     },
@@ -114,6 +126,8 @@ export function useChatBody({
     containerRef,
     timelineItems,
     scrollToBottom,
+    handleJumpToBottom,
+    showScrollToBottom,
     isFetchingMore,
   };
 }

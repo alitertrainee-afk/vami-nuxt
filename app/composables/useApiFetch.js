@@ -1,3 +1,5 @@
+const AUTH_ENDPOINTS = /^\/auth\/(login|register|refresh|logout)$/i;
+
 export function useApiFetch() {
   const config = useRuntimeConfig();
   const authStore = useAuthStore();
@@ -17,12 +19,13 @@ export function useApiFetch() {
         ...options,
       });
     } catch (error) {
-      // Handle 401 — attempt silent token refresh
-      if (error?.response?.status === 401 && !options._retry) {
+      if (
+        error?.response?.status === 401 &&
+        !options._retry &&
+        !AUTH_ENDPOINTS.test(url)
+      ) {
         const refreshed = await authStore.refreshAccessToken();
-        console.log("🚀 ~ apiFetch ~ refreshed:", refreshed);
         if (refreshed) {
-          // Retry with new token
           return apiFetch(url, {
             ...options,
             _retry: true,

@@ -1,5 +1,8 @@
 <script setup>
+// libs imports
 import { ref, computed } from "vue";
+
+// components imports
 import ChatHeader from "./ChatHeader.vue";
 import ChatBody from "./ChatBody.vue";
 import MessageComposer from "./MessageComposer.vue";
@@ -44,10 +47,12 @@ const typingUsers = computed(() => chatStore.typingUsers);
         :messages="chatStore.messages"
         :isLoading="chatStore.isLoadingMessages"
         :hasNext="chatStore.pagination?.hasNext"
+        :hasPrev="chatStore.pagination?.hasPrev ?? false"
         :currentUserId="currentUserId"
         :activeChat="chatStore.activeChat"
         :typingUsers="typingUsers"
         :loadMore="handleLoadMore"
+        :jumpToLatest="() => chatStore.jumpToLatest()"
         class="flex-1"
       />
     </main>
