@@ -16,6 +16,7 @@ export default defineNuxtConfig({
     dirs: [
       "components/modules/chat/composables",
       "components/modules/chat/stores",
+      "components/modules/task/stores",
     ],
   },
 
