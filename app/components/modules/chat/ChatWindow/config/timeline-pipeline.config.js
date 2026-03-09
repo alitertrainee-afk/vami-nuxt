@@ -15,7 +15,8 @@ function injectDateSeparators(items) {
   let lastDate = null;
 
   for (const item of items) {
-    if (item.type && item.type !== "message") {
+    // Skip non-message rows (date separators, system alerts, etc.)
+    if (item._row !== "message") {
       result.push(item);
       continue;
     }
@@ -45,7 +46,8 @@ function injectSenderClusters(items) {
   let lastTimestamp = null;
 
   return items.map((item) => {
-    if (item.type !== "message") {
+    // Skip rows that are already non-message pipeline items (date separators, etc.)
+    if (item._row && item._row !== "message") {
       lastSenderId = null;
       lastTimestamp = null;
       return item;
@@ -54,7 +56,7 @@ function injectSenderClusters(items) {
     if (item.isSystemMessage) {
       lastSenderId = null;
       lastTimestamp = null;
-      return { ...item, type: "system_alert" };
+      return { ...item, _row: "system_alert" };
     }
 
     const senderId =
@@ -68,7 +70,9 @@ function injectSenderClusters(items) {
     lastSenderId = senderId;
     lastTimestamp = currentTimestamp;
 
-    return { ...item, type: "message", isFirstInCluster };
+    // Use _row for the registry key so the message's own `type` field
+    // ("image", "video", "audio", etc.) is preserved for MessageContent.vue
+    return { ...item, _row: "message", isFirstInCluster };
   });
 }
 
@@ -77,7 +81,7 @@ function injectWelcomeCard(items, ctx) {
   if (!ctx.activeChat) return items;
 
   const hasRealMessages = items.some(
-    (i) => i.type === "message" || i.type === "system_alert",
+    (i) => i._row === "message" || i._row === "system_alert",
   );
 
   // Only show welcome if there are no messages at all

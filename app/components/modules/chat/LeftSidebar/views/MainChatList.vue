@@ -1,12 +1,13 @@
 <script setup>
 // Icons
-import { BubbleChatAddIcon, MoreVerticalSquare01Icon } from "hugeicons-vue";
+import { BubbleChatAddIcon, MoreVerticalSquare01Icon, EyeIcon } from "hugeicons-vue";
 
 // Components
 import PanelLayout from "../../layout/PanelLayout.vue";
 import UserSearch from "../UserSearch.vue";
 import FilterChip from "../FilterChip.vue";
 import NewChatPanel from "./NewChatPanel.vue";
+import StatusFeedPanel from "./StatusFeedPanel.vue";
 import SidebarBody from "../SidebarBody.vue";
 
 // UI Imports - [Molecules]
@@ -32,6 +33,7 @@ const handleMenuSelect = async (action) => {
 };
 
 const handleNewChatClick = () => openPanel("left", NewChatPanel);
+const handleStatusClick = () => openPanel("left", StatusFeedPanel);
 
 const handleUserClick = async (user) => {
   try {
@@ -42,8 +44,37 @@ const handleUserClick = async (user) => {
   }
 };
 
-const handleChatContextAction = ({ action, chat }) => {
-  console.log(`Action: ${action} triggered for chat:`, chat?._id);
+const handleChatContextAction = async ({ action, chat }) => {
+  if (!chat?._id) return;
+  try {
+    switch (action) {
+      case "pin":
+        await chatStore.updateConversationSetting(chat._id, { isPinned: true });
+        break;
+      case "unpin":
+        await chatStore.updateConversationSetting(chat._id, { isPinned: false });
+        break;
+      case "mute":
+        await chatStore.updateConversationSetting(chat._id, { isMuted: true });
+        break;
+      case "unmute":
+        await chatStore.updateConversationSetting(chat._id, { isMuted: false });
+        break;
+      case "archive":
+        await chatStore.updateConversationSetting(chat._id, { isArchived: true });
+        break;
+      case "unarchive":
+        await chatStore.updateConversationSetting(chat._id, { isArchived: false });
+        break;
+      case "leave":
+        await chatStore.leaveGroup(chat._id);
+        break;
+      default:
+        console.warn("[MainChatList] Unknown context action:", action);
+    }
+  } catch (err) {
+    console.error("[MainChatList] Context action failed:", action, err);
+  }
 };
 </script>
 
@@ -56,6 +87,16 @@ const handleChatContextAction = ({ action, chat }) => {
   >
     <template #header-actions>
       <div class="flex gap-1 text-gray-600">
+        <Tooltip text="Status Updates" position="bottom">
+          <Button
+            variant="ghost"
+            :iconOnly="true"
+            @click="handleStatusClick"
+            title="Status"
+          >
+            <EyeIcon :size="22" />
+          </Button>
+        </Tooltip>
         <Tooltip text="New Chat Ctrl+Alt+N" position="bottom">
           <Button
             variant="ghost"

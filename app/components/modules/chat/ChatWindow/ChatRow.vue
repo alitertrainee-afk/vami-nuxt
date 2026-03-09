@@ -6,7 +6,9 @@ const props = defineProps({
   ctx: { type: Object, required: true },
 });
 
-const entry = ROW_REGISTRY[props.item.type];
+// Messages use _row to avoid shadowing the message's own `type` field.
+// All other timeline items (date_separator, typing, etc.) still use `type`.
+const entry = ROW_REGISTRY[props.item._row ?? props.item.type];
 </script>
 
 <template>

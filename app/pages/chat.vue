@@ -14,6 +14,8 @@ definePageMeta({
 
 const authStore = useAuthStore();
 const chatStore = useChatStore();
+const statusStore = useStatusStore();
+const { initPush, cleanup: cleanupPush } = usePushNotifications();
 
 // Consolidated panel manager (replaces useChatUI + old usePanelManager)
 const {
@@ -29,13 +31,30 @@ const {
 onMounted(async () => {
   if (authStore.token) {
     chatStore.initializeSocket(authStore.token);
+
+    // Phase 5 — wire status socket events into statusStore
+    const socket = useSocket();
+    socket.on("contact_status_updated", statusStore.handleContactStatusUpdated);
+    socket.on("contact_status_deleted", statusStore.handleContactStatusDeleted);
+    socket.on("status_viewed", statusStore.handleStatusViewed);
+
+    // Phase 5 — Web Push (non-blocking)
+    initPush().catch(() => {});
   }
+
   openPanel("left", MainChatList);
   await chatStore.loadConversations();
 });
 
 onBeforeUnmount(() => {
+  // Remove status socket listeners
+  const socket = useSocket();
+  socket.off("contact_status_updated");
+  socket.off("contact_status_deleted");
+  socket.off("status_viewed");
+
   chatStore.disconnectSocket();
+  cleanupPush().catch(() => {});
 });
 
 const handleToggleInfo = () => {

@@ -19,7 +19,7 @@ export function useChatBody({
   const timelineItems = computed(() => {
     const raw = (messages.value || []).map((msg) => ({
       ...msg,
-      type: "message",
+      _row: "message",   // row-registry key — does NOT overwrite message.type ("image", "video", etc.)
     }));
 
     const ctx = {

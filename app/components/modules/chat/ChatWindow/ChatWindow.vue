@@ -1,6 +1,6 @@
 <script setup>
 // libs imports
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 // components imports
 import ChatHeader from "./ChatHeader.vue";
@@ -19,13 +19,21 @@ const handleLoadMore = () => {
   return chatStore.loadMoreMessages();
 };
 
-const handleSend = (content) => {
-  chatStore.sendMessage(content);
-  chatBodyRef.value?.scrollToBottom();
-};
-
 const currentUserId = computed(() => authStore.user?._id);
 const typingUsers = computed(() => chatStore.typingUsers);
+
+// Auto-scroll to bottom when a new optimistic message appears (own send)
+watch(
+  () => chatStore.messages.length,
+  (newLen, oldLen) => {
+    if (newLen > oldLen) {
+      const last = chatStore.messages[chatStore.messages.length - 1];
+      if (last?._optimistic) {
+        chatBodyRef.value?.scrollToBottom?.();
+      }
+    }
+  },
+);
 </script>
 
 <template>
@@ -58,7 +66,7 @@ const typingUsers = computed(() => chatStore.typingUsers);
     </main>
 
     <footer class="shrink-0 z-20 w-full bg-white">
-      <MessageComposer @send="handleSend" />
+      <MessageComposer />
     </footer>
   </section>
 </template>

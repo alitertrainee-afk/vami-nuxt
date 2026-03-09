@@ -1,4 +1,4 @@
-// libs imports
+﻿// libs imports
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 
@@ -15,8 +15,10 @@ import {
 
 export const useAuthStore = defineStore("auth", () => {
   // state
+  // Access token lives ONLY in memory (never persisted to localStorage).
+  // localStorage only holds the non-sensitive user profile for hydration.
   const user = ref(_hydrateUser());
-  const token = ref(getLocalStorageItem("vami_token") || null);
+  const token = ref(null); // populated by login / refreshAccessToken
   const isLoading = ref(false);
   const error = ref(null);
 
@@ -37,7 +39,7 @@ export const useAuthStore = defineStore("auth", () => {
   function _persistSession(userData, accessToken) {
     user.value = userData;
     token.value = accessToken;
-    setLocalStorageItem("vami_token", accessToken);
+    // Only the non-sensitive user profile is cached locally for hydration
     setLocalStorageItem("vami_user", JSON.stringify(userData));
   }
 
@@ -45,7 +47,6 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = null;
     token.value = null;
     error.value = null;
-    removeLocalStorageItem("vami_token");
     removeLocalStorageItem("vami_user");
   }
 
@@ -91,7 +92,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   /**
-   * Logout — clears local session and attempts server-side invalidation.
+   * Logout â€” clears local session and revokes the refresh token on the server.
    */
   async function logout() {
     try {
@@ -104,6 +105,10 @@ export const useAuthStore = defineStore("auth", () => {
     _clearSession();
   }
 
+  /**
+   * Silent token refresh â€” sends the httpOnly refresh cookie to the server.
+   * On success stores the new access token in memory only.
+   */
   async function refreshAccessToken() {
     try {
       const { apiFetch } = useApiFetch();
